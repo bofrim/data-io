@@ -1,0 +1,43 @@
+---
+channels:
+  temperature:
+    type: time_series
+    dtype: float
+  position:
+    type: struct
+    fields:
+      lat: float
+      lon: float
+  image:
+    type: image
+    resolution: [1920, 1080]
+    color_format: "RGB"
+---
+
+# Real-Time Dashboard
+
+Welcome to the real-time dashboard. Below you'll find visualizations for temperature trends, geospatial positions, and image frames, all updated dynamically based on live data.
+
+---
+
+## Temperature Data
+
+The following chart shows the temperature values collected over time.
+
+<LineChart channel="temperature" title="Temperature Over Time" dataWidth="10000" />
+
+---
+
+## Geospatial Data
+
+This map shows the current position of the International Space Station.
+
+<Map channel="position" />
+
+---
+
+## Image Data
+
+Below is the latest image data frame, updated dynamically.
+
+<ImageFrame channel="image" />

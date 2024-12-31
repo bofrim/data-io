@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "data_io"
+version = "0.1.0"
+description = "Hackable data interface layer."
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+ruamel-yaml = "^0.18.7"
+redis = "^5.2.1"
+requests = "^2.32.3"
+aiohttp = "^3.11.11"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+pylint = "^3.3.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

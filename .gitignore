@@ -1,0 +1,10 @@
+# Frontend js/ts
+*node_modules*
+*.next*
+*.out*
+*.log
+
+# Backend python
+__pycache__/
+*.pyc
+
