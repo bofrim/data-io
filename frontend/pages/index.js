@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { run } from "@mdx-js/mdx";
 import * as runtime from "react/jsx-runtime";
-import { LineChart, Map, ImageFrame } from "../components/components";
+import { LineChart } from "../components/dataViz/lineChart";
+import { Spectrogram } from "../components/dataViz/spectrogram";
+import { Map, MultiMap } from "../components/dataViz/map";
 
 // Custom MDX components mapping
 const components = {
   LineChart,
   Map,
-  ImageFrame,
+  MultiMap,
+  Spectrogram,
 };
 
 const HomePage = () => {

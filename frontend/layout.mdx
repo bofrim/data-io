@@ -3,41 +3,65 @@ channels:
   temperature:
     type: time_series
     dtype: float
+    buffer: 10000
+  audio_spectrogram:
+    type: array
+    dtype: float
+    buffer: 100
   position:
     type: struct
     fields:
       lat: float
       lon: float
-  image:
-    type: image
-    resolution: [1920, 1080]
-    color_format: "RGB"
+    buffer: 10000
+  earthquake_data:
+    type: struct
+    fields:
+      lat: float
+      lon: float
+      magnitude: float
+    buffer: 1
 ---
 
 # Real-Time Dashboard
 
-Welcome to the real-time dashboard. Below you'll find visualizations for temperature trends, geospatial positions, and image frames, all updated dynamically based on live data.
+Welcome to the real-time dashboard.
+Below you'll find visualizations for temperature trends,
+geospatial positions, and image frames,
+all updated dynamically based on live data.
 
 ---
 
-## Temperature Data
+## Audio Data
 
-The following chart shows the temperature values collected over time.
-
-<LineChart channel="temperature" title="Temperature Over Time" dataWidth="10000" />
+<Spectrogram channel="audio_spectrogram" />
 
 ---
 
-## Geospatial Data
+## Random Data
 
-This map shows the current position of the International Space Station.
+The following chart shows random +/- one values each sample
 
-<Map channel="position" />
+<LineChart channel="temperature" title="Temperature Over Time" dataWidth="6000" />
 
 ---
 
-## Image Data
+<div style={{ display: "flex", gap: "1rem" }}>
+  <div style={{ flex: 1 }}>
+    ## Space Station Data
 
-Below is the latest image data frame, updated dynamically.
+    This map shows the current position of the International Space Station.
 
-<ImageFrame channel="image" />
+    <Map channel="position" />
+  </div>
+  <div style={{ flex: 1 }}>
+    ## Earthquake Data
+
+    This map shows the latest earthquake data.
+
+    <MultiMap channel="earthquake_data" />
+  </div>
+</div>
+
+
+---

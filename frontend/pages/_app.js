@@ -1,14 +1,17 @@
 import { MDXProvider } from "@mdx-js/react";
-import { RedisProvider } from "../components/RedisDataContext";
 import { RedisSSEProvider } from "../components/RedisSSEProvider";
-import { LineChart, Map, ImageFrame } from "../components/components";
-import { useEffect, useState } from "react";
+import { RedisWebSocketProvider } from "../components/RedisWSProvider";
+import { Map, MultiMap } from "../components/dataViz/map";
+import { LineChart } from "../components/dataViz/lineChart";
+import { Spectrogram } from "../components/dataViz/spectrogram";
+import { useEffect, useState, useMemo } from "react";
 
 // Custom components mapping for MDX
 const components = {
   LineChart,
   Map,
-  ImageFrame,
+  MultiMap,
+  Spectrogram,
 };
 
 function MyApp({ Component, pageProps }) {
@@ -21,7 +24,11 @@ function MyApp({ Component, pageProps }) {
       try {
         const response = await fetch("/api/layout");
         const result = await response.json();
-        setChannels(result.channels || {});
+        setChannels((prevChannels) =>
+          JSON.stringify(prevChannels) === JSON.stringify(result.channels)
+            ? prevChannels
+            : result.channels || {}
+        );
         setMdxContent(result.mdxContent || "");
       } catch (error) {
         console.error("Failed to fetch layout data:", error);
@@ -31,14 +38,13 @@ function MyApp({ Component, pageProps }) {
     fetchLayoutData();
   }, []);
 
+  const memoizedChannels = useMemo(() => Object.keys(channels), [channels]);
+
   return (
-    <RedisSSEProvider channels={Object.keys(channels)}>
-      {/* <RedisProvider channels={channels}> */}
+    <RedisSSEProvider channels={memoizedChannels}>
       <MDXProvider components={components}>
-        <div dangerouslySetInnerHTML={{ __html: mdxContent }} />
         <Component {...pageProps} />
       </MDXProvider>
-      {/* </RedisProvider> */}
     </RedisSSEProvider>
   );
 }

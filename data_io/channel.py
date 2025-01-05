@@ -16,6 +16,10 @@ class ChannelPublisher:
         self.redis = Redis(host=redis_host, port=redis_port, decode_responses=True)
         self.channels = self.parse_interface_file(interface_file)
 
+    @property
+    def channel_list(self):
+        return list(self.channels.keys)
+
     def parse_interface_file(self, interface_file):
         """
         Parse the YAML section of the interface file to extract channel configs.
