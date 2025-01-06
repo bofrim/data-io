@@ -4,6 +4,7 @@ import * as runtime from "react/jsx-runtime";
 import { LineChart } from "../components/dataViz/lineChart";
 import { Spectrogram } from "../components/dataViz/spectrogram";
 import { Map, MultiMap } from "../components/dataViz/map";
+import { MatrixImage } from "../components/dataViz/matrixImage";
 
 // Custom MDX components mapping
 const components = {
@@ -11,6 +12,7 @@ const components = {
   Map,
   MultiMap,
   Spectrogram,
+  MatrixImage,
 };
 
 const HomePage = () => {

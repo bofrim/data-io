@@ -21,6 +21,11 @@ channels:
       lon: float
       magnitude: float
     buffer: 1
+  bw_image:
+    type: image
+    height: 128
+    width: 128
+    channels: 3
 ---
 
 # Real-Time Dashboard
@@ -29,6 +34,11 @@ Welcome to the real-time dashboard.
 Below you'll find visualizations for temperature trends,
 geospatial positions, and image frames,
 all updated dynamically based on live data.
+
+
+## Image Data
+
+<MatrixImage channel="bw_image" />
 
 ---
 

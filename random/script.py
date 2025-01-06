@@ -16,16 +16,12 @@ async def get_iss_location():
     url = "http://api.open-notify.org/iss-now.json"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
-            if response.status == 200:
-                data = await response.json()
-                position = data["iss_position"]
-                latitude = float(position["latitude"])
-                longitude = float(position["longitude"])
-                return latitude, longitude
-            else:
-                raise Exception(
-                    f"Failed to fetch ISS location. HTTP status code: {response.status}"
-                )
+            response.raise_for_status()
+            data = await response.json()
+            position = data["iss_position"]
+            latitude = float(position["latitude"])
+            longitude = float(position["longitude"])
+            return latitude, longitude
 
 
 async def temperature_publisher(

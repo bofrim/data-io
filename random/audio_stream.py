@@ -92,7 +92,7 @@ class AudioStreamer:
                         "amplitudes": averaged_data,
                     },
                 )
-                await asyncio.sleep(0.05)  # Publish every 100ms
+                await asyncio.sleep(0.005)  # Publish every 100ms
 
 
 async def audio_publisher(publisher):

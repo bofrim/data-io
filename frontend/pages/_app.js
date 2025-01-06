@@ -4,6 +4,7 @@ import { WsBufferProvider } from "../components/WSProvider";
 import { Map, MultiMap } from "../components/dataViz/map";
 import { LineChart } from "../components/dataViz/lineChart";
 import { Spectrogram } from "../components/dataViz/spectrogram";
+import { MatrixImage } from "../components/dataViz/matrixImage";
 import { useEffect, useState, useMemo } from "react";
 
 // Custom components mapping for MDX

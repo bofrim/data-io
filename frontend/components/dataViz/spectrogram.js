@@ -26,7 +26,7 @@ export const Spectrogram = ({
       const binHeight = height / allDataPoints[0].frequencies.length; // Height of each frequency bin
 
       // Render the historical spectrogram
-      allDataPoints.forEach(({ amplitudes, frequencies }, timeIndex) => {
+      allDataPoints.forEach(({ amplitudes }, timeIndex) => {
         amplitudes.forEach((amplitude, freqIndex) => {
           // Map amplitude to color
           const mapToColor = (value) => {
