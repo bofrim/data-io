@@ -41,11 +41,11 @@ function MyApp({ Component, pageProps }) {
   const memoizedChannels = useMemo(() => Object.keys(channels), [channels]);
 
   return (
-    <RedisSSEProvider channels={memoizedChannels}>
+    <RedisWebSocketProvider channels={memoizedChannels}>
       <MDXProvider components={components}>
         <Component {...pageProps} />
       </MDXProvider>
-    </RedisSSEProvider>
+    </RedisWebSocketProvider>
   );
 }
 

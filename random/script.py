@@ -1,14 +1,13 @@
+""""""
+
 import argparse
 import asyncio
 import random
 import aiohttp
-import numpy as np
-import sounddevice as sd
-from scipy.signal import spectrogram
-from data_io.channel import ChannelPublisher
+from data_io.websocket_channel import WebSocketChannelPublisher
 
 ISS_PERIOD_SEC = 10  # Period to fetch ISS location in seconds
-RANDOM_DATA_PERIOD_SEC = 0.01  # Period to publish random data in seconds
+RANDOM_DATA_PERIOD_SEC = 0.001  # Period to publish random data in seconds
 
 
 async def get_iss_location():
@@ -28,7 +27,9 @@ async def get_iss_location():
                 )
 
 
-async def temperature_publisher(publisher, channel="temperature"):
+async def temperature_publisher(
+    publisher: WebSocketChannelPublisher, channel="temperature"
+):
     """Task that continuously publishes random temperature values."""
     temperature = 0.0  # Local state for temperature
     while True:
@@ -79,7 +80,7 @@ async def earthquake_data_publisher(publisher, channel="earthquake_data"):
 
 async def main(path: str):
     """Initialize the publisher and run the tasks."""
-    publisher = ChannelPublisher(interface_file=path)
+    publisher = WebSocketChannelPublisher(source_name="script", interface_file=path)
     print(f"Publisher initialized with channels: {publisher.channels.keys()}")
 
     # Run the tasks concurrently

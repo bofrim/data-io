@@ -1,19 +1,19 @@
 """Basic channel publisher implementation."""
 
+from abc import abstractmethod
 import json
 
 from ruamel.yaml import YAML
-from redis import Redis
 
 
-class ChannelPublisher:
+class AbstractChannelPublisher:
     """Simple class to publish messages to data channels."""
 
-    def __init__(self, interface_file, redis_host="localhost", redis_port=6379):
+    def __init__(self, source_name: str, interface_file: str):
         """
         Parse the interface file and initialize Redis connection.
         """
-        self.redis = Redis(host=redis_host, port=redis_port, decode_responses=True)
+        self.name = source_name
         self.channels = self.parse_interface_file(interface_file)
 
     @property
@@ -31,12 +31,18 @@ class ChannelPublisher:
         config = yaml.load(yaml_part)
         return config.get("channels", {})
 
+    def format(self, channel_name, value):
+        """
+        Format the value to be published to a channel.
+        """
+        return json.dumps(
+            {
+                "source": self.name,
+                "channel": channel_name,
+                "value": value,
+            }
+        )
+
+    @abstractmethod
     def publish(self, channel_name, value):
-        """
-        Publish a value to a Redis channel.
-        """
-        if channel_name not in self.channels:
-            raise ValueError(
-                f"Channel '{channel_name}' is not defined in the interface file."
-            )
-        self.redis.publish(channel_name, json.dumps(value))
+        """Publish a value to a channel."""

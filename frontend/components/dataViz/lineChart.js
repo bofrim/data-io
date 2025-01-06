@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { RedisSSEContext } from "../RedisSSEProvider";
+import { RedisWebSocketContext } from "../RedisWSProvider";
 
 export const LineChart = ({ channel, title, dataWidth = 100 }) => {
-  const data = useContext(RedisSSEContext);
+  const data = useContext(RedisWebSocketContext);
   const [allDataPoints, setAllDataPoints] = useState([]); // Store all past data points
   const canvasRef = useRef(null);
   const dataWidthInt = +dataWidth;

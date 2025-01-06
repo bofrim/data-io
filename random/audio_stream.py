@@ -3,7 +3,7 @@ import asyncio
 import numpy as np
 import sounddevice as sd
 from scipy.signal import spectrogram
-from data_io.channel import ChannelPublisher
+from data_io.websocket_channel import WebSocketChannelPublisher
 
 
 class AudioStreamer:
@@ -103,7 +103,7 @@ async def audio_publisher(publisher):
 
 async def main(path: str):
     """Initialize the publisher and run the tasks."""
-    publisher = ChannelPublisher(interface_file=path)
+    publisher = WebSocketChannelPublisher(interface_file=path)
     print(f"Publisher initialized with channels: {publisher.channels.keys()}")
 
     # Run the audio publisher task

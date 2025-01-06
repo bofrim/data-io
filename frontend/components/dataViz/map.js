@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef } from "react";
-import { RedisSSEContext } from "../RedisSSEProvider";
+import { RedisWebSocketContext } from "../RedisWSProvider";
 
 // Helper function to convert lat/lon to x/y coordinates on the map
 const latLonToXY = (lat, lon, mapWidth, mapHeight) => {
@@ -10,7 +10,7 @@ const latLonToXY = (lat, lon, mapWidth, mapHeight) => {
 
 // Map Component
 export const Map = ({ channel }) => {
-  const data = useContext(RedisSSEContext);
+  const data = useContext(RedisWebSocketContext);
   const position = data[channel] || { lat: 0, lon: 0 };
   const canvasRef = useRef(null);
   const positionsRef = useRef([]); // To store the last 100 positions
@@ -98,7 +98,7 @@ const getRadiusByMagnitude = (magnitude) => {
 
 // MultiMap Component
 export const MultiMap = ({ channel }) => {
-  const data = useContext(RedisSSEContext);
+  const data = useContext(RedisWebSocketContext);
   const mapData = data[channel] || []; // Fetch data from the specified channel
   const canvasRef = useRef(null);
 

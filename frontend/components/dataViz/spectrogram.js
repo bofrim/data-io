@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { RedisSSEContext } from "../RedisSSEProvider";
+import { RedisWebSocketContext } from "../RedisWSProvider";
 
 export const Spectrogram = ({
   channel,
@@ -7,7 +7,7 @@ export const Spectrogram = ({
   dataWidth = 200, // Number of historical time slices to show
   canvasHeight = 200,
 }) => {
-  const data = useContext(RedisSSEContext);
+  const data = useContext(RedisWebSocketContext);
   const [frequencyHistory, setFrequencyHistory] = useState([]); // Store historical spectrogram data
   const canvasRef = useRef(null);
 

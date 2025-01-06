@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Client</title>
+</head>
+<body>
+  <h1>WebSocket Proxy Client</h1>
+  <label for="role">Select Role:</label>
+  <select id="role">
+    <option value="producer">Producer (Send Data)</option>
+    <option value="consumer">Consumer (Receive Data)</option>
+  </select>
+  <br><br>
+  <label for="server">WebSocket URL:</label>
+  <input
+    type="text"
+    id="server"
+    value="ws://192.168.1.100:8080"
+    placeholder="Enter WebSocket server URL"
+    style="width: 300px;"
+  />
+  <br><br>
+  <button id="connect">Connect</button>
+  <button id="disconnect" disabled>Disconnect</button>
+  <br><br>
+  <div id="producer-panel" style="display: none;">
+    <h2>Producer Panel</h2>
+    <textarea id="message" placeholder="Type a message..." rows="4" cols="50"></textarea>
+    <br>
+    <button id="send">Send Message</button>
+  </div>
+  <div id="consumer-panel" style="display: none;">
+    <h2>Consumer Panel</h2>
+    <div id="messages" style="border: 1px solid #ccc; padding: 10px; width: 400px; height: 200px; overflow-y: scroll;">
+      <p><em>No messages yet...</em></p>
+    </div>
+  </div>
+  <script>
+    let socket = null;
+
+    document.getElementById("connect").addEventListener("click", () => {
+      const role = document.getElementById("role").value;
+      const server = document.getElementById("server").value;
+      const url = `${server}/${role}`;
+
+      socket = new WebSocket(url);
+
+      socket.addEventListener("open", () => {
+        console.log("Connected to:", url);
+        document.getElementById("connect").disabled = true;
+        document.getElementById("disconnect").disabled = false;
+
+        if (role === "producer") {
+          document.getElementById("producer-panel").style.display = "block";
+          document.getElementById("consumer-panel").style.display = "none";
+        } else {
+          document.getElementById("consumer-panel").style.display = "block";
+          document.getElementById("producer-panel").style.display = "none";
+        }
+      });
+
+      socket.addEventListener("message", async (event) => {
+  const messagesDiv = document.getElementById("messages");
+  const newMessage = document.createElement("p");
+
+  // Check if the data is a Blob
+  if (event.data instanceof Blob) {
+    const text = await event.data.text(); // Convert Blob to text
+    newMessage.textContent = text;
+  } else {
+    newMessage.textContent = event.data; // If not a Blob, treat as plain text
+  }
+
+  messagesDiv.appendChild(newMessage);
+});
+
+      socket.addEventListener("close", () => {
+        console.log("Disconnected from:", url);
+        document.getElementById("connect").disabled = false;
+        document.getElementById("disconnect").disabled = true;
+        document.getElementById("producer-panel").style.display = "none";
+        document.getElementById("consumer-panel").style.display = "none";
+      });
+
+      socket.addEventListener("error", (error) => {
+        console.error("WebSocket error:", error);
+      });
+    });
+
+    document.getElementById("disconnect").addEventListener("click", () => {
+      if (socket) {
+        socket.close();
+      }
+    });
+
+    document.getElementById("send").addEventListener("click", () => {
+      const message = document.getElementById("message").value;
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(message);
+        console.log("Sent message:", message);
+        document.getElementById("message").value = "";
+      }
+    });
+  </script>
+</body>
+</html>
