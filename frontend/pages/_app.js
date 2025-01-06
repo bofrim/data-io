@@ -1,6 +1,6 @@
 import { MDXProvider } from "@mdx-js/react";
 import { RedisSSEProvider } from "../components/RedisSSEProvider";
-import { RedisWebSocketProvider } from "../components/RedisWSProvider";
+import { WsBufferProvider } from "../components/WSProvider";
 import { Map, MultiMap } from "../components/dataViz/map";
 import { LineChart } from "../components/dataViz/lineChart";
 import { Spectrogram } from "../components/dataViz/spectrogram";
@@ -41,11 +41,11 @@ function MyApp({ Component, pageProps }) {
   const memoizedChannels = useMemo(() => Object.keys(channels), [channels]);
 
   return (
-    <RedisWebSocketProvider channels={memoizedChannels}>
+    <WsBufferProvider channels={memoizedChannels}>
       <MDXProvider components={components}>
         <Component {...pageProps} />
       </MDXProvider>
-    </RedisWebSocketProvider>
+    </WsBufferProvider>
   );
 }
 

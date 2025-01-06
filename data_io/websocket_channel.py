@@ -32,7 +32,7 @@ class WebSocketChannelPublisher(AbstractChannelPublisher):
 
         try:
             self.ws.send(self.format(channel_name, value))
-            print(f"Published: [{channel_name}] {value}")
+            # print(f"Published: [{channel_name}] {value}")
         except Exception as e:
             raise RuntimeError(f"Failed to publish message: {e}") from e
 

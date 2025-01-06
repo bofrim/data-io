@@ -1,5 +1,8 @@
-import React, { useContext, useEffect, useRef } from "react";
-import { RedisWebSocketContext } from "../RedisWSProvider";
+import React, { useEffect, useRef } from "react";
+import {
+  useBufferedChannelData,
+  useLatestChannelValue,
+} from "../../hooks/channelData";
 
 // Helper function to convert lat/lon to x/y coordinates on the map
 const latLonToXY = (lat, lon, mapWidth, mapHeight) => {
@@ -9,17 +12,13 @@ const latLonToXY = (lat, lon, mapWidth, mapHeight) => {
 };
 
 // Map Component
-export const Map = ({ channel }) => {
-  const data = useContext(RedisWebSocketContext);
-  const position = data[channel] || { lat: 0, lon: 0 };
+export const Map = ({ channel, dataWidth = 100 }) => {
   const canvasRef = useRef(null);
-  const positionsRef = useRef([]); // To store the last 100 positions
-
-  useEffect(() => {
-    // Update historical positions when new data arrives
-    const newPositions = [...positionsRef.current, position].slice(-100);
-    positionsRef.current = newPositions;
-  }, [position]);
+  const allDataPoints = useBufferedChannelData(channel, dataWidth);
+  const position = allDataPoints[allDataPoints.length - 1] || {
+    lat: 0,
+    lon: 0,
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -39,7 +38,7 @@ export const Map = ({ channel }) => {
       ctx.drawImage(mapImage, 0, 0, width, height);
 
       // Draw previous positions as red dots
-      positionsRef.current.forEach(({ lat, lon }) => {
+      (allDataPoints || [{ lat: 0, lon: 0 }]).forEach(({ lat, lon }) => {
         if (lat === 0 && lon === 0) return; // Skip the initial position
         const { x, y } = latLonToXY(lat, lon, width, height);
         ctx.beginPath();
@@ -98,8 +97,7 @@ const getRadiusByMagnitude = (magnitude) => {
 
 // MultiMap Component
 export const MultiMap = ({ channel }) => {
-  const data = useContext(RedisWebSocketContext);
-  const mapData = data[channel] || []; // Fetch data from the specified channel
+  const mapData = useLatestChannelValue(channel, []); // Fetch the latest data point
   const canvasRef = useRef(null);
 
   const mapImage =
@@ -125,17 +123,18 @@ export const MultiMap = ({ channel }) => {
       // Render the data points
       mapData.forEach((point) => {
         const { lat, lon, magnitude } = point;
+        const clippedMagnitude = Math.min(Math.max(magnitude, 0.1), 10);
 
         // Validate data points
         if (
           typeof lat !== "number" ||
           typeof lon !== "number" ||
-          typeof magnitude !== "number" ||
+          typeof clippedMagnitude !== "number" ||
           lat < -90 ||
           lat > 90 ||
           lon < -180 ||
           lon > 180 ||
-          magnitude <= 0
+          clippedMagnitude <= 0
         ) {
           console.warn("Skipping invalid data point:", point);
           return;
@@ -143,8 +142,8 @@ export const MultiMap = ({ channel }) => {
 
         // Convert lat/lon to canvas x/y
         const { x, y } = latLonToXY(lat, lon, mapWidth, mapHeight);
-        const color = getColorByMagnitude(magnitude);
-        const radius = getRadiusByMagnitude(magnitude);
+        const color = getColorByMagnitude(clippedMagnitude);
+        const radius = getRadiusByMagnitude(clippedMagnitude);
 
         // Draw a circle for the data point
         ctx.beginPath();

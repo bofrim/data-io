@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { RedisWebSocketContext } from "../RedisWSProvider";
+import React, { useEffect, useRef } from "react";
+import { useBufferedChannelData } from "../../hooks/channelData";
 
 export const Spectrogram = ({
   channel,
@@ -7,22 +7,8 @@ export const Spectrogram = ({
   dataWidth = 200, // Number of historical time slices to show
   canvasHeight = 200,
 }) => {
-  const data = useContext(RedisWebSocketContext);
-  const [frequencyHistory, setFrequencyHistory] = useState([]); // Store historical spectrogram data
   const canvasRef = useRef(null);
-
-  useEffect(() => {
-    // Update the frequency history when new data arrives on the channel
-    if (data[channel]) {
-      const { amplitudes } = data[channel];
-      if (amplitudes && amplitudes.length > 0) {
-        setFrequencyHistory((prevHistory) => [
-          ...prevHistory.slice(-dataWidth + 1), // Maintain a sliding window of historical data
-          amplitudes, // Add the latest amplitude array
-        ]);
-      }
-    }
-  }, [data[channel]]);
+  const allDataPoints = useBufferedChannelData(channel, dataWidth);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -35,12 +21,12 @@ export const Spectrogram = ({
     // Clear the canvas
     ctx.clearRect(0, 0, width, height);
 
-    if (frequencyHistory.length > 0) {
+    if (allDataPoints.length > 0) {
       const timeSliceWidth = width / dataWidth; // Width of each time slice
-      const binHeight = height / frequencyHistory[0].length; // Height of each frequency bin
+      const binHeight = height / allDataPoints[0].frequencies.length; // Height of each frequency bin
 
       // Render the historical spectrogram
-      frequencyHistory.forEach((amplitudes, timeIndex) => {
+      allDataPoints.forEach(({ amplitudes, frequencies }, timeIndex) => {
         amplitudes.forEach((amplitude, freqIndex) => {
           // Map amplitude to color
           const mapToColor = (value) => {
@@ -62,7 +48,7 @@ export const Spectrogram = ({
         });
       });
     }
-  }, [frequencyHistory, dataWidth]);
+  }, [allDataPoints, dataWidth]);
 
   // Adjust canvas size dynamically
   useEffect(() => {

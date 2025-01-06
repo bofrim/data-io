@@ -103,7 +103,7 @@ async def audio_publisher(publisher):
 
 async def main(path: str):
     """Initialize the publisher and run the tasks."""
-    publisher = WebSocketChannelPublisher(interface_file=path)
+    publisher = WebSocketChannelPublisher(source_name="audio", interface_file=path)
     print(f"Publisher initialized with channels: {publisher.channels.keys()}")
 
     # Run the audio publisher task

@@ -1,21 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { RedisWebSocketContext } from "../RedisWSProvider";
+import React, { useEffect, useRef } from "react";
+import { useBufferedChannelData } from "../../hooks/channelData";
 
 export const LineChart = ({ channel, title, dataWidth = 100 }) => {
-  const data = useContext(RedisWebSocketContext);
-  const [allDataPoints, setAllDataPoints] = useState([]); // Store all past data points
+  const allDataPoints = useBufferedChannelData(channel, dataWidth);
   const canvasRef = useRef(null);
-  const dataWidthInt = +dataWidth;
-
-  useEffect(() => {
-    // Append new data points when the channel data changes
-    if (data[channel]) {
-      setAllDataPoints((prevData) => [
-        ...prevData.slice(-1 * dataWidthInt),
-        data[channel],
-      ]);
-    }
-  }, [data[channel]]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

@@ -7,7 +7,8 @@ import aiohttp
 from data_io.websocket_channel import WebSocketChannelPublisher
 
 ISS_PERIOD_SEC = 10  # Period to fetch ISS location in seconds
-RANDOM_DATA_PERIOD_SEC = 0.001  # Period to publish random data in seconds
+RANDOM_DATA_PERIOD_SEC = 0.0001  # Period to publish random data in seconds
+EARTHQUAKE_PERIOD_SEC = 10  # Period to fetch earthquake data in secondss
 
 
 async def get_iss_location():
@@ -75,7 +76,7 @@ async def earthquake_data_publisher(publisher, channel="earthquake_data"):
         except Exception as e:
             print(f"Error fetching earthquake data: {e}")
 
-        await asyncio.sleep(60)  # Fetch every minute
+        await asyncio.sleep(EARTHQUAKE_PERIOD_SEC)  # Fetch every minute
 
 
 async def main(path: str):
@@ -86,8 +87,8 @@ async def main(path: str):
     # Run the tasks concurrently
     await asyncio.gather(
         temperature_publisher(publisher),
-        # iss_location_publisher(publisher),
-        # earthquake_data_publisher(publisher),
+        iss_location_publisher(publisher),
+        earthquake_data_publisher(publisher),
     )
 
 
